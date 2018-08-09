@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class GamePlay {
@@ -8,6 +10,9 @@ public class GamePlay {
     private int id;
     private int theBiggestBet = BIGBLIND;
     private Scanner sc = new Scanner(System.in);
+    private List<Card> cardsOnTheMid = new ArrayList<>();
+    private boolean betting = true;
+    private boolean play = true;
 
     public GamePlay() {
         players = new Players();
@@ -19,26 +24,57 @@ public class GamePlay {
 
     public void game() {
         int counter = 0;
-        boolean play = true;
         players.dealCards();
         dealsBlinds();
         id = findBigBlind() + 1;
 
         while (play) {
-            move(id);
-            counter++;
-            if (counter == players.getPlayers().size()){
-                counter = 0;
+
+            while (betting) {
+                move(id);
+                betting = checkBets();
             }
+
+            //musze sprawdzic czy zostal tylko jeden zawodnik ktory nie spasowal
+
+            if (counter <= 0) {
+                dealsCards(counter);
+                counter++;
+            } else {
+                //roztrzygniecie
+            }
+
+            betting = true;
         }
 
     }
 
-    private boolean checkbets(){
-       for (Player player: players.getPlayers()) {
+    private void dealsCards(int counter) {
 
-       }
-        return false;
+        switch (counter) {
+            case 0:
+                cardsOnTheMid.add(players.getDeck().getDeck().get(9));
+                cardsOnTheMid.add(players.getDeck().getDeck().get(10));
+                cardsOnTheMid.add(players.getDeck().getDeck().get(11));
+                break;
+
+            case 1:
+                cardsOnTheMid.add(players.getDeck().getDeck().get(13));
+                break;
+
+            case 2:
+                cardsOnTheMid.add(players.getDeck().getDeck().get(15));
+                break;
+
+                default:
+                    System.out.println("blad");
+                    break;
+        }
+
+    }
+
+    private boolean checkBets(){
+        return !players.getPlayers().stream().filter(Player::getInDeal).allMatch(Player::isWait);
     }
 
     private void dealsBlinds() {
@@ -49,15 +85,13 @@ public class GamePlay {
             if (player.isSmallBlind()){
                 player.setCash(player.getCash() - SMALLBLIND);
                 thePot += SMALLBLIND;
+                player.setBet(SMALLBLIND);
             } else if (player.isBigBlind()) {
                 player.setCash(player.getCash() - BIGBLIND);
                 thePot += BIGBLIND;
+                player.setBet(BIGBLIND);
             }
         }
-    }
-
-    public int getThePot() {
-        return thePot;
     }
 
     private int findBigBlind(){
@@ -73,6 +107,11 @@ public class GamePlay {
     }
 
     private void move(int id) {
+
+        if (!players.getPlayers().get(id).getInDeal()) {
+            abc();
+            return;
+        }
 
         switch (id) {
             case 0:
@@ -95,29 +134,35 @@ public class GamePlay {
                 action(players.getPlayers().get(id));
                 break;
 
-            case 5:
-                action(players.getPlayers().get(id));
-                break;
-
                 default:
                     System.out.println("zle id");
                     break;
-
         }
     }
 
 
     private void action(Player player){
         int bet = 0;
-        System.out.println("Podaj za ile wchodzisz");
+        System.out.println(player.getName() + " twoj stack " + player.getCash());
+        System.out.println("Podaj za ile wchodzisz, jesli chcesz poczekac podaj - 1");
         bet = sc.nextInt(); sc.nextLine();
 
-        if (bet == 0 || !player.getInDeal()) {
-            player.setInDeal(false);
+        if (bet == -1) {
+            player.setWait(true);
+            abc();
             return;
         }
 
-        if (bet < theBiggestBet && player.getCash() >= theBiggestBet) {
+        player.setBet(player.getBet() + bet);
+
+        if (bet == 0) {
+            player.setInDeal(false);
+            abc();
+            return;
+        }
+
+        if (player.getBet() < theBiggestBet && player.getCash() >= theBiggestBet) {
+            System.out.println(player.getBet());
             System.out.println("bet musi byc wikeszy lub rowny najwiekszemu betowi");
         } else if (bet < theBiggestBet && player.getCash() < theBiggestBet) {
             System.out.println("wchodzisz all in");
@@ -125,16 +170,20 @@ public class GamePlay {
         } else if (bet > player.getCash()) {
             System.out.println("wchodzisz all in");
             return;
-        } else if (bet > theBiggestBet && player.getCash() > bet) {
+        } else if (player.getBet() >= theBiggestBet && player.getCash() > bet) {
+            System.out.println("test");
             player.setCash(player.getCash() - bet);
             thePot += bet;
             theBiggestBet = bet;
         }
+        abc();
+    }
+
+    private void abc() {
         id++;
         if (id == players.getPlayers().size())
             id = 0;
     }
-
-
+    
 
 }

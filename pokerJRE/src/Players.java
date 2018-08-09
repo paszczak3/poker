@@ -5,6 +5,7 @@ import java.util.List;
 public class Players implements PlayerHandle{
     private final static int MAX_PLAYERS = 6;
     private List<Player> players;
+    private Deck deck;
 
     public Players() {
         players = new ArrayList<>();
@@ -12,7 +13,7 @@ public class Players implements PlayerHandle{
 
     @Override
     public void dealCards() {
-        Deck deck = new Deck();
+        deck = new Deck();
         int cards = 0;
         for (int j = 0; j < 2; j++) {
             for (int i = 0; i < players.size(); i++) {
@@ -20,8 +21,6 @@ public class Players implements PlayerHandle{
                 cards++;
             }
         }
-
-        //deck.getDeck().forEach(m -> System.out.println(m));
 
     }
 
@@ -33,6 +32,9 @@ public class Players implements PlayerHandle{
             players.add(player);
     }
 
+    public Deck getDeck() {
+        return deck;
+    }
 
     public List<Player> getPlayers() {
         return players;

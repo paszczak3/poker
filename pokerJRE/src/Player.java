@@ -10,6 +10,7 @@ public class Player {
     private int cash = 6600;
     private boolean inDeal = true;
     private int bet;
+    private boolean isWait = false;
 
     public boolean getInDeal() {
         return inDeal;
@@ -92,5 +93,25 @@ public class Player {
 
     public int getId() {
         return id;
+    }
+
+    public void setSmallBlind(boolean smallBlind) {
+        this.smallBlind = smallBlind;
+    }
+
+    public void setBigBlind(boolean bigBlind) {
+        this.bigBlind = bigBlind;
+    }
+
+    public boolean isInDeal() {
+        return inDeal;
+    }
+
+    public boolean isWait() {
+        return isWait;
+    }
+
+    public void setWait(boolean wait) {
+        isWait = wait;
     }
 }
