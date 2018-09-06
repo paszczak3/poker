@@ -11,6 +11,20 @@ public class Player {
     private boolean inDeal = true;
     private int bet;
     private boolean isWait = false;
+    private int points = 0;
+    private String hand = "";
+
+    public String getHand() {
+        return hand;
+    }
+
+    public void setHand(String hand) {
+        this.hand = hand;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
 
     public boolean getInDeal() {
         return inDeal;
@@ -20,9 +34,6 @@ public class Player {
         this.inDeal = inDeal;
     }
 
-    public Player(String name) {
-        this.name = name;
-    }
 
     public Player(String name, int id, boolean smallBlind, boolean bigBlind) {
         this.name = name;
@@ -35,9 +46,15 @@ public class Player {
         return name;
     }
 
-    public Card[] getCards() {
-        return cards;
+
+    public Card getFirstCard(){
+        return cards[0];
     }
+
+    public Card getSecondCard(){
+        return cards[1];
+    }
+
 
     public void addCard(Card card){
         if (cards[1] != null){
@@ -51,6 +68,11 @@ public class Player {
             cards[1] = card;
     }
 
+    public void resetCard() {
+        cards[0] = null;
+        cards[1] = null;
+    }
+
     public int getBet() {
         return bet;
     }
@@ -59,13 +81,6 @@ public class Player {
         this.bet = bet;
     }
 
-    public void smallBlindOff(){
-        smallBlind = false;
-    }
-
-    public void smallBlindOn(){
-        smallBlind = true;
-    }
 
     @Override
     public String toString() {
@@ -114,4 +129,6 @@ public class Player {
     public void setWait(boolean wait) {
         isWait = wait;
     }
+
+
 }
